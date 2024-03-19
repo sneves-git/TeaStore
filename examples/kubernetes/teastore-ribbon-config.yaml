@@ -1,0 +1,243 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-db
+  labels:
+    app: teastore
+    run: teastore-db
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-db
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-db
+    spec:
+      containers:
+      - name: teastore-db
+        image: $(teastore-db-image)
+        ports:
+        - containerPort: $(teastore-db-port)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teastore-db
+  labels:
+    app: teastore
+    run: teastore-db
+spec:
+  ports:
+  - port: $(teastore-db-port)
+    protocol: TCP
+  selector:
+    run: teastore-db
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-registry
+  labels:
+    app: teastore
+    run: teastore-registry
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-registry
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-registry
+    spec:
+      containers:
+      - name: teastore-registry
+        image: $(teastore-registry-image)
+        ports:
+        - containerPort: $(teastore-registry-port)
+        env:
+        - name: USE_POD_IP
+          value: $(env-use-pod-ip)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teastore-registry
+  labels:
+    app: teastore
+    run: teastore-registry
+spec:
+  ports:
+  - port: $(teastore-registry-port)
+    protocol: TCP
+  selector:
+    run: teastore-registry
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-persistence
+  labels:
+    app: teastore
+    run: teastore-persistence
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-persistence
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-persistence
+    spec:
+      containers:
+      - name: teastore-persistence
+        image: $(teastore-persistence-image)
+        ports:
+        - containerPort: $(teastore-persistence-port)
+        env:
+        - name: USE_POD_IP
+          value: $(env-use-pod-ip)
+        - name: REGISTRY_HOST
+          value: $(env-registry-host)
+        - name: DB_HOST
+          value: $(env-db-host)
+        - name: DB_PORT
+          value: $(teastore-db-port)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-auth
+  labels:
+    app: teastore
+    run: teastore-auth
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-auth
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-auth
+    spec:
+      containers:
+      - name: teastore-auth
+        image: $(teastore-auth-image)
+        ports:
+        - containerPort: $(teastore-auth-port)
+        env:
+        - name: USE_POD_IP
+          value: $(env-use-pod-ip)
+        - name: REGISTRY_HOST
+          value: $(env-registry-host)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-image
+  labels:
+    app: teastore
+    run: teastore-image
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-image
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-image
+    spec:
+      containers:
+      - name: teastore-image
+        image: $(teastore-image-image)
+        ports:
+        - containerPort: $(teastore-image-port)
+        env:
+        - name: USE_POD_IP
+          value: $(env-use-pod-ip)
+        - name: REGISTRY_HOST
+          value: $(env-registry-host)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-recommender
+  labels:
+    app: teastore
+    run: teastore-recommender
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-recommender
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-recommender
+    spec:
+      containers:
+      - name: teastore-recommender
+        image: $(teastore-recommender-image)
+        ports:
+        - containerPort: $(teastore-recommender-port)
+        env:
+        - name: USE_POD_IP
+          value: $(env-use-pod-ip)
+        - name: REGISTRY_HOST
+          value: $(env-registry-host)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: teastore-webui
+  labels:
+    app: teastore
+    run: teastore-webui
+spec:
+  selector:
+    matchLabels:
+      app: teastore
+      run: teastore-webui
+  template:
+    metadata:
+      labels:
+        app: teastore
+        run: teastore-webui
+    spec:
+      containers:
+      - name: teastore-webui
+        image: $(teastore-webui-image)
+        ports:
+        - containerPort: $(teastore-webui-port)
+        env:
+        - name: USE_POD_IP
+          value: $(env-use-pod-ip)
+        - name: REGISTRY_HOST
+          value: $(env-registry-host)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: teastore-webui
+  labels:
+    app: teastore
+    run: teastore-webui
+spec:
+  type: NodePort
+  ports:
+  - port: $(teastore-webui-port)
+    nodePort: $(teastore-webui-node-port)
+    protocol: TCP
+  selector:
+    run: teastore-webui

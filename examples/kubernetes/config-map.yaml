@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: teastore-config
+data:
+  #Database
+  teastore-db-image: descartesresearch/teastore-db
+  teastore-db-port: "3306"
+
+  #Registry
+  teastore-registry-image: descartesresearch/teastore-registry
+  teastore-registry-port: "8080"
+
+  #Persistence
+  teastore-persistence-image: descartesresearch/teastore-persistence
+  teastore-persistence-port: "8080"
+
+  #Authentication
+  teastore-auth-image: descartesresearch/teastore-auth
+  teastore-auth-port: "8080"
+
+  #Image
+  teastore-image-image: descartesresearch/teastore-image
+  teastore-image-port: "8080"
+
+  #Recommender
+  teastore-recommender-image: descartesresearch/teastore-recommender
+  teastore-recommender-port: "8080"
+
+  #WebUI
+  teastore-webui-image: descartesresearch/teastore-webui
+  teastore-webui-port: "8080"
+  teastore-webui-node-port: "30080"
+
+  #Environment variables
+  env-use-pod-ip: "true"
+  env-registry-host: "teastore-registry"
+  env-db-host: "teastore-db"
